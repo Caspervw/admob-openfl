@@ -1,9 +1,11 @@
 Google AdMob extension for OpenFL applications. Working on both Android and iOS. Code is heavily based on NMEX extension which is pretty much outdated right now.
 
 **Thanks**
+
 This is a fork of the admob-openfl library from Michał Korman. All credits go to Michał and whomever pushed to that project.
 
-**What changed**
+**Changes**
+
 For our projected we needed a fast performing ad-library, since we would show and hide the ads on every dead/win of our game. The original implementation created a view on ```Ad.show()``` and destroyed it again on ```Ad.hide()```. This, in our case, led to a buildup of views being created and destroyed, which made our game drop from 60FPS to 10FPS within minutes. To circumvent this issue we do not recreate views, but only show and hide them. Notice: this means that the ad is not refreshed every ```Ad.show()``` call!
 
 ```We only changed the banner ads implementation```
