@@ -1,6 +1,14 @@
 Google AdMob extension for OpenFL applications. Working on both Android and iOS. Code is heavily based on NMEX extension which is pretty much outdated right now.
 
-**Instructions**
+**Thanks**
+This is a fork of the admob-openfl library from Michał Korman. All credits go to Michał and whomever pushed to that project.
+
+**What changed**
+For our projected we needed a fast performing ad-library, since we would show and hide the ads on every dead/win of our game. The original implementation created a view on ```Ad.show()``` and destroyed it again on ```Ad.hide()```. This, in our case, led to a buildup of views being created and destroyed, which made our game drop from 60FPS to 10FPS within minutes. To circumvent this issue we do not recreate views, but only show and hide them. Notice: this means that the ad is not refreshed every ```Ad.show()``` call!
+
+```We only changed the banner ads implementation```
+
+**Original statement**
 
 1. Clone this repo using ```haxelib git admob https://github.com/mkorman9/admob-openfl``` command
 2. Include extension to your project ```<haxelib name="admob" /> ```
@@ -17,7 +25,7 @@ where arguments are following:
 
 **Prerequisites on iOS**
 
-1. Add following code to your project.xml 
+1. Add following code to your project.xml
 ```xml
 <ios linker-flags="-force_load __PATH_TO_THE_HAXELIB_DIR__/admob/git/ndll/iPhone/libGoogleAdMobAds.a" />
 
@@ -37,7 +45,7 @@ haxelib run hxcpp Build.xml
 **Prerequisites on Android**
 
 1. Copy android-template directory to your project
-2. Add following code to your project.xml: 
+2. Add following code to your project.xml:
 ```xml
 <java path="android-template/libs/google-play-services.jar" if="android" />
 <template path="android-template/AndroidManifest.xml" rename="AndroidManifest.xml" if="android" />
