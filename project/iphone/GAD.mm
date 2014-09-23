@@ -72,13 +72,6 @@ namespace admobIOS {
 
 	void refreshAd() {
 		GADRequest *request = [[GADRequest alloc] init];
-		if (testAds) {
-			request.testing = YES;
-			request.testDevices = [NSArray arrayWithObjects:
-						GAD_SIMULATOR_ID,
-						nil];
-		}
-
 		[bannerView_ loadRequest:request];
 	}
 
@@ -92,12 +85,6 @@ namespace admobIOS {
 		//interstitial_.rootViewController = rootView;
 
 		GADRequest *request = [[GADRequest alloc] init];
-		if (testInterstitial) {
-			request.testing = YES;
-			request.testDevices = [NSArray arrayWithObjects:
-                                   GAD_SIMULATOR_ID,
-                                   nil];
-		}
 
         [interstitial_ loadRequest:[GADRequest request]];
 	}
