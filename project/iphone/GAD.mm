@@ -2,6 +2,8 @@
 #import <UIKit/UIKit.h>
 #import <GADBannerView.h>
 #import <GADInterstitial.h>
+#import <GADInterstitialDelegate.h>
+#import "include/AdManager.h"
 
 namespace admobIOS {
 
@@ -16,6 +18,8 @@ namespace admobIOS {
     static const char *interstitialId;   
     static double interstitialTime = -1.0;
     static bool startViewingIntersitials = false;
+
+    static AdManager * adManager;
 
 	void initAd(const char *ID, int x, int y, int size, bool testMode) {
 		testAds = testMode;
@@ -70,8 +74,7 @@ namespace admobIOS {
     }
 
     void hideAd() {
-    	bannerView_.hidden = YES;
-		// [bannerView_ removeFromSuperview];
+    	bannerView_.hidden = YES;		
     }
 
 	void refreshAd() {
@@ -79,47 +82,21 @@ namespace admobIOS {
 		[bannerView_ loadRequest:request];
 	}
 
-	void refreshInterstitial(int initCooldown) {		
+	void initInterstitial(const char *Id, bool testMode, int initCooldown) {
+		if(adManager == nil) {
+			adManager = [[AdManager alloc] init];
+		}
 
-		interstitialTime = CACurrentMediaTime() + initCooldown;
+		NSString *nsInterstitialId = [[NSString alloc] initWithUTF8String: Id];
 
-		NSString *GADID = [[NSString alloc] initWithUTF8String: interstitialId];
-
-        interstitial_ = [[GADInterstitial alloc] init];
-        interstitial_.adUnitID = GADID;
-		GADRequest *request = [[GADRequest alloc] init];
-
-        [interstitial_ loadRequest:[GADRequest request]];
-
-        [GADID release];
-        startViewingIntersitials = true;
-        NSLog(@"refreshInterstitial");	  
+		[adManager initInterstitial:nsInterstitialId testMode:testMode initCooldown:initCooldown];      
 	}
 
-	void initInterstitial(const char *ID, bool testMode, int initCooldown) {
-		testInterstitial = testMode;
-		interstitialId   = ID;
-
-		interstitialTime = CACurrentMediaTime() + initCooldown;
-		NSLog(@"currentTime: %f", CACurrentMediaTime());
-        NSLog(@"interstitialTime %f", interstitialTime);	       
-        NSLog(@"initCooldown %d", initCooldown);	       
+	void refreshInterstitial() {
+		[adManager refreshInterstitial];
 	}
 
     void showInterstitial() {
-    	NSLog(@"%f", 	CACurrentMediaTime());
-    	NSLog(@"vs %f", interstitialTime);
-
-    	if(CACurrentMediaTime() > interstitialTime) {
-    		interstitialTime = CACurrentMediaTime();
-    		refreshInterstitial(110); //110 sec cooldown
-    		return;
-    	}
-
-    	if(startViewingIntersitials) {		
-			rootView = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-	        [interstitial_ presentFromRootViewController:rootView];
-        }
+    	[adManager showInterstitial];
     }
-
 }

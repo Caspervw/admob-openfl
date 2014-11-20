@@ -19,6 +19,7 @@
   <compilerflag value="-IiPhone/include"/>
   <compilerflag value="-Iinclude"/>
   <file name="iphone/GAD.mm" />
+  <file name="iphone/AdManager.m" />
 </files>
 
 <files id="common">
