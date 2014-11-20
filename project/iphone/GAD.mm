@@ -13,6 +13,10 @@ namespace admobIOS {
     static GADInterstitial *interstitial_;
     static bool testInterstitial;
 
+    static const char *interstitialId;   
+    static double interstitialTime = -1.0;
+    static bool startViewingIntersitials = false;
+
 	void initAd(const char *ID, int x, int y, int size, bool testMode) {
 		testAds = testMode;
 		rootView = [[[UIApplication sharedApplication] keyWindow] rootViewController];
@@ -75,24 +79,47 @@ namespace admobIOS {
 		[bannerView_ loadRequest:request];
 	}
 
-	void initInterstitial(const char *ID, bool testMode) {
-		testInterstitial = testMode;
+	void refreshInterstitial(int initCooldown) {		
 
-		NSString *GADID = [[NSString alloc] initWithUTF8String: ID];
+		interstitialTime = CACurrentMediaTime() + initCooldown;
+
+		NSString *GADID = [[NSString alloc] initWithUTF8String: interstitialId];
 
         interstitial_ = [[GADInterstitial alloc] init];
         interstitial_.adUnitID = GADID;
-		//interstitial_.rootViewController = rootView;
-
 		GADRequest *request = [[GADRequest alloc] init];
 
         [interstitial_ loadRequest:[GADRequest request]];
+
+        [GADID release];
+        startViewingIntersitials = true;
+        NSLog(@"refreshInterstitial");	  
+	}
+
+	void initInterstitial(const char *ID, bool testMode, int initCooldown) {
+		testInterstitial = testMode;
+		interstitialId   = ID;
+
+		interstitialTime = CACurrentMediaTime() + initCooldown;
+		NSLog(@"currentTime: %f", CACurrentMediaTime());
+        NSLog(@"interstitialTime %f", interstitialTime);	       
+        NSLog(@"initCooldown %d", initCooldown);	       
 	}
 
     void showInterstitial() {
-		//[rootView.view addSubview: interstitial_];
-		rootView = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-        [interstitial_ presentFromRootViewController:rootView];
+    	NSLog(@"%f", 	CACurrentMediaTime());
+    	NSLog(@"vs %f", interstitialTime);
+
+    	if(CACurrentMediaTime() > interstitialTime) {
+    		interstitialTime = CACurrentMediaTime();
+    		refreshInterstitial(110); //110 sec cooldown
+    		return;
+    	}
+
+    	if(startViewingIntersitials) {		
+			rootView = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+	        [interstitial_ presentFromRootViewController:rootView];
+        }
     }
 
 }
